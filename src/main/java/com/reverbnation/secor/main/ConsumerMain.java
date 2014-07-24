@@ -22,7 +22,6 @@ import com.pinterest.secor.consumer.Consumer;
 import com.pinterest.secor.util.FileUtil;
 import com.pinterest.secor.util.RateLimitUtil;
 import com.reverbnation.secor.common.ReverbConfig;
-import com.reverbnation.secor.common.SchemaRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
