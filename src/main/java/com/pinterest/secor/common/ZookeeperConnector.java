@@ -80,7 +80,8 @@ public class ZookeeperConnector {
     }
 
     private String getCommittedOffsetGroupPath() {
-        return "/consumers/" + mConfig.getKafkaGroup() + "/offsets";
+        String path = mConfig.getKafkaZookeeperPath() + "/consumers/" + mConfig.getKafkaGroup() + "/offsets";
+        return  path.replaceAll("//","/");
     }
 
     private String getCommittedOffsetTopicPath(String topic) {
