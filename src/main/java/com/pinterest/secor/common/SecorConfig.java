@@ -20,6 +20,9 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.StringUtils;
 
+import java.util.Map;
+import java.util.Properties;
+
 /**
  * One-stop shop for Secor configuration options.
  *
@@ -30,8 +33,14 @@ public class SecorConfig {
 
     public static SecorConfig load() throws ConfigurationException {
         // Load the default configuration file first
-        String configProperty = System.getProperty("config");
+        Properties systemProperties = System.getProperties();
+        String configProperty = systemProperties.getProperty("config");
+
         PropertiesConfiguration properties = new PropertiesConfiguration(configProperty);
+
+        for (final Map.Entry<Object, Object> entry : systemProperties.entrySet()) {
+            properties.setProperty(entry.getKey().toString(), entry.getValue());
+        }
 
         return new SecorConfig(properties);
     }
@@ -48,12 +57,28 @@ public class SecorConfig {
         return getInt("kafka.seed.broker.port");
     }
 
+    public String getKafkaZookeeperPath() {
+        return getString("kafka.zookeeper.path");
+    }
+
     public String getZookeeperQuorum() {
         return StringUtils.join(getStringArray("zookeeper.quorum"), ',');
     }
 
     public int getConsumerTimeoutMs() {
         return getInt("kafka.consumer.timeout.ms");
+    }
+
+    public String getRebalanceMaxRetries() {
+        return getString("kafka.rebalance.max.retries");
+    }
+
+    public String getFetchMessageMaxBytes() {
+        return getString("kafka.fetch.message.max.bytes");
+    }
+
+    public String getSocketReceieveBufferBytes() {
+        return getString("kafka.socket.receive.buffer.bytes");
     }
 
     public int getGeneration() {
@@ -116,6 +141,10 @@ public class SecorConfig {
         return getInt("secor.topic_partition.forget.seconds");
     }
 
+    public int getLocalLogDeleteAgeHours() {
+        return getInt("secor.local.log.delete.age.hours");
+    }
+
     public int getOstrichPort() {
         return getInt("ostrich.port");
     }
@@ -138,6 +167,14 @@ public class SecorConfig {
 
     public String getTsdbBlacklistTopics() {
         return getString("tsdb.blacklist.topics");
+    }
+
+    public String getMessageTimestampName() {
+        return getString("message.timestamp.name");
+    }
+
+    public String getCompressionCodec() {
+        return getString("secor.compression.codec");
     }
 
     private void checkProperty(String name) {
