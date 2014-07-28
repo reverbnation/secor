@@ -19,6 +19,7 @@ package com.reverbnation.secor.main;
 import com.pinterest.secor.common.OstrichAdminService;
 import com.pinterest.secor.common.SecorConfig;
 import com.pinterest.secor.consumer.Consumer;
+import com.pinterest.secor.tools.LogFileDeleter;
 import com.pinterest.secor.util.FileUtil;
 import com.pinterest.secor.util.RateLimitUtil;
 import com.reverbnation.secor.common.ReverbConfig;
@@ -55,6 +56,10 @@ public class ConsumerMain {
             ReverbConfig reverbConfig = ReverbConfig.load();
             OstrichAdminService ostrichService = new OstrichAdminService(secorConfig.getOstrichPort());
             ostrichService.start();
+
+            LogFileDeleter logFileDeleter = new LogFileDeleter(secorConfig);
+            logFileDeleter.deleteOldLogs();
+
             FileUtil.configure(secorConfig);
             RateLimitUtil.configure(secorConfig);
             Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
