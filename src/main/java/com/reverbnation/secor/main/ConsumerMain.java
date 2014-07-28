@@ -53,6 +53,8 @@ public class ConsumerMain {
         try {
             SecorConfig secorConfig = SecorConfig.load();
             ReverbConfig reverbConfig = ReverbConfig.load();
+            OstrichAdminService ostrichService = new OstrichAdminService(secorConfig.getOstrichPort());
+            ostrichService.start();
             FileUtil.configure(secorConfig);
             RateLimitUtil.configure(secorConfig);
             Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
