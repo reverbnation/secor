@@ -169,6 +169,18 @@ public class SecorConfig {
         return getString("tsdb.blacklist.topics");
     }
 
+    public String getStatsdNamespace() {
+        return getString("statsd.namespace");
+    };
+
+    public String getStatsdHost() {
+        return getString("statsd.host");
+    };
+
+    public Integer getStatsdPort() {
+        return getInt("statsd.port");
+    };
+
     public String getMessageTimestampName() {
         return getString("message.timestamp.name");
     }
