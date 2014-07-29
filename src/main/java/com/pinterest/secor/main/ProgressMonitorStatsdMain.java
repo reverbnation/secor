@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * This is really rough. Once it is a little more flushed out will probably merge into the main monitor
  */
 
-    
+
 public class ProgressMonitorStatsdMain {
     private static final Logger LOG = LoggerFactory.getLogger(ProgressMonitorStatsdMain.class);
 
@@ -47,7 +47,16 @@ public class ProgressMonitorStatsdMain {
         try {
             SecorConfig config = SecorConfig.load();
             ProgressMonitorStatsd progressMonitor = new ProgressMonitorStatsd(config);
-            progressMonitor.exportStats();
+            Boolean exit = false;
+            while(!exit) {
+                try {
+                    progressMonitor.exportStats();
+                    Thread.sleep(60000); //Statsd has ~ 60s resolution
+                } catch (InterruptedException e) {
+                    LOG.warn("Shutting Down");
+                    System.exit(0);
+                }
+            }
         } catch (Throwable t) {
             LOG.error("Progress monitor failed", t);
             System.exit(1);
