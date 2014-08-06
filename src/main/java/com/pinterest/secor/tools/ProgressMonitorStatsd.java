@@ -70,7 +70,7 @@ public class ProgressMonitorStatsd {
                 long committedOffset = - 1;
                 if (committedMessage == null) {
                     LOG.warn("no committed message found in topic " + topic + " partition " +
-                        partition);
+                            partition);
                 } else {
                     committedOffset = committedMessage.getOffset();
                 }
@@ -80,15 +80,15 @@ public class ProgressMonitorStatsd {
                     LOG.warn("no message found in topic " + topic + " partition " + partition);
                 } else {
                     long lastOffset = lastMessage.getOffset();
-                    assert committedOffset <= lastOffset: Long.toString(committedOffset) + " <= " +
-                        lastOffset;
+                    assert committedOffset <= lastOffset : Long.toString(committedOffset) + " <= " +
+                            lastOffset;
                     long offsetLag = lastOffset - committedOffset;
                     HashMap<String, String> tags = new HashMap<String, String>();
                     tags.put("topic", topic);
                     tags.put("partition", Integer.toString(partition));
-                    statsd.recordGaugeValue(("secor.lag.offsets" + '.' + topic + '.' + Integer.toString(partition)), (int) offsetLag);
+                    statsd.gauge(("secor.lag.offsets" + '.' + topic + '.' + Integer.toString(partition)), offsetLag);
                     LOG.debug("topic " + topic + " partition " + partition + " committed offset " +
-                        committedOffset + " last offset " + lastOffset );
+                            committedOffset + " last offset " + lastOffset);
                 }
             }
         }
