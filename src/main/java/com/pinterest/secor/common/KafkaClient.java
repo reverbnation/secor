@@ -58,7 +58,7 @@ public class KafkaClient {
     private HostAndPort findLeader(TopicPartition topicPartition) {
         SimpleConsumer consumer = null;
         try {
-            LOG.info("looking up lader for topic " + topicPartition.getTopic() + " partition " +
+            LOG.info("looking up leader for topic " + topicPartition.getTopic() + " partition " +
                 topicPartition.getPartition());
             consumer = new SimpleConsumer(mConfig.getKafkaSeedBrokerHost(),
                     mConfig.getKafkaSeedBrokerPort(),
@@ -168,20 +168,34 @@ public class KafkaClient {
     }
 
     public Message getLastMessage(TopicPartition topicPartition) throws TException {
-        SimpleConsumer consumer = createConsumer(topicPartition);
-        long lastOffset = findLastOffset(topicPartition, consumer);
-        if (lastOffset < 1) {
-            return null;
+        SimpleConsumer consumer = null;
+        try {
+            consumer = createConsumer(topicPartition);
+            long lastOffset = findLastOffset(topicPartition, consumer);
+            if (lastOffset < 1) {
+                return null;
+            }
+            return getMessage(topicPartition, lastOffset, consumer);
+        } finally {
+            if (consumer != null) {
+                consumer.close();
+            }
         }
-        return getMessage(topicPartition, lastOffset, consumer);
     }
 
     public Message getCommittedMessage(TopicPartition topicPartition) throws Exception {
-        long committedOffset = mZookeeperConnector.getCommittedOffsetCount(topicPartition) - 1;
-        if (committedOffset < 0) {
-            return null;
+        SimpleConsumer consumer = null;
+        try {
+            long committedOffset = mZookeeperConnector.getCommittedOffsetCount(topicPartition) - 1;
+            if (committedOffset < 0) {
+                return null;
+            }
+            consumer = createConsumer(topicPartition);
+            return getMessage(topicPartition, committedOffset, consumer);
+        } finally {
+            if (consumer != null) {
+                consumer.close();
+            }
         }
-        SimpleConsumer consumer = createConsumer(topicPartition);
-        return getMessage(topicPartition, committedOffset, consumer);
     }
 }
